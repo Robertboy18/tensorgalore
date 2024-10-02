@@ -1,0 +1,99 @@
+default: &DEFAULT
+
+  #General
+  # For computing compression
+  n_params_baseline: None
+  verbose: True
+  arch: 'fno2d'
+
+  #Distributed computing
+  distributed:
+    use_distributed: True
+
+  # FNO related
+  fno2d:
+    data_channels: 1
+    n_modes_height: 100
+    n_modes_width: 100
+    hidden_channels: 256 
+    projection_channels: 256
+    n_layers: 4
+    domain_padding: 0 #0.078125
+    domain_padding_mode: 'one-sided' #symmetric
+    fft_norm: 'forward'
+    norm: None
+    skip: 'linear'
+    implementation: 'reconstructed'
+    positional_embedding: 'grid'
+    use_mlp: 1
+    mlp_expansion: 0.5
+    mlp_dropout: 0
+
+    separable: False
+    factorization: None
+    rank: 1.0
+    fixed_rank_modes: None
+    dropout: 0.0
+    tensor_lasso_penalty: 0.0
+    joint_factorization: False
+    fno_block_precision: 'full' # or 'half', 'mixed'
+    stabilizer: None # or 'tanh'
+
+  # Optimizer
+  opt:
+    n_epochs: 500
+    checkpointing: True
+    resume_from_dir: "/global/homes/d/dhpitt/psc/checkpoints"
+    save_dir: "/global/homes/d/dhpitt/psc/checkpoints"
+    save_every: 1
+    learning_rate: 1e-4
+    training_loss: 'h1'
+    weight_decay: 1e-4
+    amp_autocast: False
+    scheduler_T_max: 50 # For cosine only, typically take n_epochs
+    scheduler_patience: 50 # For ReduceLROnPlateau only
+    scheduler: 'StepLR' # Or 'CosineAnnealingLR' OR 'ReduceLROnPlateau'
+    step_size: 25
+    gamma: 0.5
+    per_layer_opt: False
+    galore: True
+    galore_scale: 0.25
+    galore_rank: 16 #(2,2,2,2) 4
+    act_checkpoint: False
+    naive_galore: False
+    first_dim_rollup: 2 
+    adamw_support_complex: True
+    update_proj_gap: 50
+    galore_proj_type: left
+
+
+  # Dataset related
+  data:
+    root: /global/homes/d/dhpitt/psc/data/navier_stokes/ 
+    batch_size: 1
+    n_train: 10000 #00
+    train_resolution: 1024
+    n_tests: [2000] #[2000]
+    test_resolutions: [1024]
+    test_batch_sizes: [1]
+    encode_input: True
+    encode_output: True
+    download: False
+
+  # Patching
+  patching:
+    levels: 0
+    padding: 0
+    stitching: False
+  
+  # Weights and biases
+  wandb:
+    log: True
+    name: "navierstokes_sep7" # If None, config will be used but you can override it here
+    group: "pino-training" 
+    project: "tensorgalore" 
+    entity: "pino-training" # put your username here
+    sweep: False
+    log_output: True
+    log_test_interval: 1
+    resume: "allow"
