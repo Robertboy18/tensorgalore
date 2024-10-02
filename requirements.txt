@@ -1,0 +1,13 @@
+wandb
+ruamel.yaml
+configmypy
+tensorly
+tensorly-torch
+matplotlib
+opt-einsum
+h5py
+zarr
+pytest
+more_itertools
+git+https://github.com/neuraloperator/neuraloperator.git@3c95d8ec74b3b5d336a7461f082607382882ad01
+#open3d-python
